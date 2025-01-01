@@ -1,6 +1,6 @@
 # stuScoreManager
 #### 这是一个轻量级学生成绩管理系统，致力于减轻数信学院职工的工作量，推进教管系统数字化。
-要正常编译和运行C程序，你应该使用GB2312编码。<br>
+要正常编译和运行这个C程序，你应该使用GB2312编码。<br>
 Visual Studio默认使用GB2312编码，用它打开这个C程序文件是一个不错的选择。
 
 `#define _CRT_SECURE_NO_WARNINGS`<br>
