@@ -1,7 +1,22 @@
+//#define _CRT_SECURE_NO_WARNINGS
+//#pragma warning(disable: 4996)
+//若使用visual studio运行时报错，可以考虑在最前面加上这两行
+
+//README!!!:
+//to normally compile and run the c program, you should encoding it with GB2312.
+//while visual studio uses GB2312 encoding by default, it is a good choice to open this c programfile.
+
+//使用GB2312编码时，一个中文字符占2字节，而在UTF-8编码中，一个中文字符通常占用3个字节，但二者的非中文字符的编码形式相互兼容。
+//在中文windows系统，终端中用户所输入的字符会默认以GB2312之类的中文编码格式写在内存里，
+//然后以GB2312编码的数据再经过程序的处理，程序输出的数据结果终端会默认以GB2312读取并显示出来。
+//若以UTF-8保存并编译代码，会出现一些问题：
+//1.出现中文字符的排版问题 2.程序无法正常在终端显示中文字符
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<conio.h>
 #include<string.h>
+#include<float.h>
 #include<ctype.h>
 
 #define N 30 //设定系统内管理的学生人数上限为30，可自行修改
@@ -211,9 +226,9 @@ void modifyInfo() {
             break;
         }
       }
-      printf("\n修改后的学生的信息如下：");
-      printf("\n%10s %10s %6s %6s %6s %6s\n","姓名","学号","C语言","编译原理","数据库","离散数学");
-      printf("%10s %10s %6.2f %6.2f %6.2f %6.2f\n",info.name,info.id,info.c,info.theory,info.data,info.math);
+      printf("\n修改后的学生的信息如下：\n");
+      printf("%10s %10s %10s %10s %10s %10s\n","姓名","学号","C语言","编译原理","数据库","离散数学");
+      printf("%10s %10s %10.2f %10.2f %10.2f %10.2f\n",info.name,info.id,info.c,info.theory,info.data,info.math);
       fseek(fp,-(int)sizeof(stu),1); //负号表示后退，1表示文件当前位置
       fwrite(&info,sizeof(stu),1,fp); //再重新写入，同时把之前的要修改的覆盖掉
       printf("修改成功~");
@@ -256,9 +271,11 @@ void insertInfo() {
   int line=1;
   printf("请输入要插入到的行数：");
   while (1) {
-    scanf("%d",&line);
-    if (line>=1&&line<=N) break;
-    else printf("\n请确保行数不为负且不大于30，再次输入：");
+    if (scanf("%d",&line)&&line>=1&&line<=N) break;
+    else {
+      printf("\n请输入不大于%d的正整数，再次输入：",N);
+      while (getchar()!='\n');
+    }
   }
   if (line<=len) {
     printf("\n即将把数据插入至第%d行\n",line);
@@ -318,7 +335,7 @@ void deleteInfo() {
       printf("无法打开数据文件！\n");
       exit(0);
     }
-    for (int i=0;i<len-1;i++) {
+    for (int i=0;i<len;i++) {
       if (i==isFound) continue; //写入文件时跳过目标信息，实现删除效果
       fwrite(&infos[i],sizeof(stu),1,fp);
     }
@@ -367,7 +384,7 @@ void threeValues() {
   printf("%9s %18s %17s %10s\n","科目","最高分","最低分","平均分");
   char subjects[4][11]={"c语言：","编译原理：","数据库：","离散数学："}; 
   for (int i=0;i<4;i++) {
-    float highest=0,lowest=0,sum=0;
+    float highest=0,lowest=FLT_MAX,sum=0;
     int hp=0,lp=0;
     for (int j=0;j<len;j++) {
       if (scores[j][i]>highest) {
@@ -449,9 +466,9 @@ void rankSum() {
       if (ran[j].score>ran[maxp].score) maxp=j;
     }
     printf("第%d名 %10s %10.2f\n",i+1,ran[maxp].name,ran[maxp].score);
-    float temp=ran[maxp].score;
-    ran[maxp].score=ran[i].score;
-    ran[i].score=temp;
+    rank temp=ran[maxp];
+    ran[maxp]=ran[i];
+    ran[i]=temp;
   }
   getch();
 }
@@ -535,16 +552,17 @@ void statistic() {
 void about() {
   system("cls");
   printf(
-    "+------------------------------------+\n"
-    "| About stuScoreManager              |\n"
-    "|                                    |\n"
-    "| [stuScoreManager] Version 1.0.6    |\n"
-    "|                                    |\n"
-    "| Follow auther on social media:     |\n"
-    "| [Github] @Bc408                    |\n"
-    "|                                    |\n"
-    "| Thank you for using stuScoreManage |\n"
-    "+------------------------------------+\n"
+    "+-------------------------------------+\n"
+    "| About stuScoreManager               |\n"
+    "|                                     |\n"
+    "| [stuScoreManager] Version 1.0.10    |\n"
+    "| No Copyrights                       |\n"
+    "|                                     |\n"
+    "| Follow auther on social media:      |\n"
+    "| [Github] @Bc408                     |\n"
+    "|                                     |\n"
+    "| Thank you for using stuScoreManager |\n"
+    "+-------------------------------------+\n"
   );
   getch();
 }
